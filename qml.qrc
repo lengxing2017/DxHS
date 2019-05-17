@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>image/Dxlogo.png</file>
+        <file>image/footerbk.jpg</file>
+        <file>image/LOGO.png</file>
+        <file>Home.qml</file>
+        <file>Setup.qml</file>
+        <file>Data.qml</file>
+        <file>HomeUI/Login.qml</file>
+        <file>HomeUI/Startup.qml</file>
+        <file>HomeUI/Idle.qml</file>
+        <file>image/openDoor.png</file>
+        <file>HomeUI/BoxReady.qml</file>
+        <file>image/start.png</file>
+        <file>image/editInfo.png</file>
+        <file>HomeUI/TestProcess.qml</file>
+    </qresource>
+</RCC>
