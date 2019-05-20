@@ -31,7 +31,8 @@ SOURCES += \
     module/dao/testresultmgr.cpp \
     module/dao/usermgr.cpp \
     module/printermgr.cpp \
-    module/uart/commgr.cpp
+    module/uart/commgr.cpp \
+    module/v4l.cpp
 
 RESOURCES += qml.qrc
 
@@ -75,6 +76,7 @@ HEADERS += \
     module/uart/frame.h \
     module/uart/framebuffer.h \
     module/uart/framestatus.h \
-    module/dao/AssayMgr.h
+    module/dao/AssayMgr.h \
+    module/v4l.h
 
 DISTFILES +=
