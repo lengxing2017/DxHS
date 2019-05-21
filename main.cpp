@@ -22,10 +22,10 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-
     sqlitemgrinstance = new SqliteMgr();
     sqlitemgrinstance->conn(QCoreApplication::applicationDirPath() + "/data.db","sa","123456");
     //init dao manager
+    //sqlitemgrinstance->init();
     assaymgrinstance= new AssayMgr();
     logmgrinstance = new LogMgr();
     panelmgrinstance = new PanelMgr();

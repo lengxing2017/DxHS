@@ -15,5 +15,6 @@
         <file>image/start.png</file>
         <file>image/editInfo.png</file>
         <file>HomeUI/TestProcess.qml</file>
+        <file>image/line.png</file>
     </qresource>
 </RCC>

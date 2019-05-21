@@ -10,7 +10,13 @@
 #include <QDebug>
 #include "sqlitemgr.h"
 #include <QCoreApplication>
-QString ExGlobal::panelCode = "";
+
+QString ExGlobal::t_panelCode = "Lot# 0180435";
+QString ExGlobal::t_panelName = "PanelNameInit";
+QString ExGlobal::t_sampleCode = "";
+QString ExGlobal::t_sampleInfo = "";
+QString ExGlobal::t_user = "";
+
 
 ExGlobal::ExGlobal(QObject *parent) : QObject(parent)
 {
@@ -21,7 +27,7 @@ void ExGlobal::exInit()
 {
 
     qDebug()<<"ExInit";
-    panelCode = "lxText";
+    t_panelCode = "lxText";
 
     if(sqlitemgrinstance == nullptr)
     {

@@ -11,12 +11,11 @@ Sequence::Sequence(QObject *parent) : QObject(parent)
 }
 
 void Sequence::sequenceDo(SequenceId id)
-{    
-    qDebug()<<ExGlobal::panelCode<<"id:"<<id;
+{        
     this->currSequenceId = id;
     if (id == SequenceId::Sequence_Test)
     {
-        if (!ReadTestProcess(QCoreApplication::applicationDirPath()+"/Panel4.xml"))
+        if (!ReadTestProcess(QCoreApplication::applicationDirPath()+"/Panel3.xml"))
         {
             emit sequenceFinish(SequenceResult::Result_Test_DataErr);
             return;
@@ -26,12 +25,22 @@ void Sequence::sequenceDo(SequenceId id)
     timer->start(1000);
 }
 
+void Sequence::sequenceCancel()
+{
+    timer->stop();
+    currSequenceId = SequenceId::Sequence_Idle;
+}
+
 void Sequence::SequenceTimeout()
 {
-    qDebug()<<"SequenceTimeout";
+    qDebug()<<"SequenceTimeout,SequenceId:"<<this->currSequenceId<<"FinishCount:"<<nFinishCount;
     if (this->currSequenceId == Sequence::SequenceId::Sequence_SelfCheck)
         emit sequenceFinish(SequenceResult::Result_SelfCheck_ok);
     else if(this->currSequenceId==Sequence::SequenceId::Sequence_OpenBox){
+        ExGlobal::setPanelName("上呼吸道测试");
+        ExGlobal::setPanelCode("0180434");
+        ExGlobal::setSampleCode("SLX 01079");
+        ExGlobal::setSampleInfo("华山11");
         emit sequenceFinish(SequenceResult::Result_OpenBox_ok);
     }
     else if(this->currSequenceId==Sequence::SequenceId::Sequence_Test){

@@ -11,6 +11,7 @@ class Sequence : public QObject
 public:
     explicit Sequence(QObject *parent = nullptr);
     enum class SequenceId{
+        Sequence_Idle,
         Sequence_SelfCheck,
         Sequence_OpenBox,
         Sequence_CloseBox,
@@ -34,6 +35,7 @@ public:
     Q_ENUM(SequenceResult)
 
     Q_INVOKABLE void sequenceDo(SequenceId id);
+    Q_INVOKABLE void sequenceCancel();
 
 signals:
     void sequenceFinish(SequenceResult result);

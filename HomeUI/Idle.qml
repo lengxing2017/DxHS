@@ -2,6 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.5
 
 import Dx.Sequence 1.0
+import Dx.Global 1.0
+
 Page {
     id: idle_page
     Image {
@@ -31,7 +33,7 @@ Page {
     Text{
         id: userName
 
-        text:"user001"
+        text:ExGlobal.user
         font.pixelSize: 30
         anchors.left: parent.left
         anchors.leftMargin: 20
@@ -47,7 +49,8 @@ Page {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 20
         anchors.right: parent.right
-        anchors.rightMargin: 20        
+        anchors.rightMargin: 20
+        onClicked: Qt.quit()
     }
 
     Button {
@@ -59,10 +62,14 @@ Page {
         anchors.bottomMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 20
+        onClicked: {
+            stackView.pop();
+            stackView.push("qrc:/HomeUI/Login.qml");
+        }
     }
 
     Component.onCompleted: {
-        home_page.titlemsg=qsTr("正在测试");
+        home_page.titlemsg=qsTr("待机");
         home_page.enableTabBar = true;
     }
 

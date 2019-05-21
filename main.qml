@@ -5,8 +5,8 @@ import QtQuick.VirtualKeyboard 2.4
 ApplicationWindow {
     id: window
     visible: true
-    width: window.width
-    height: window.height
+    width: screen.width
+    height: screen.height
     title: qsTr("闪量-华山")
 
     InputPanel {

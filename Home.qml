@@ -12,7 +12,11 @@ Page {
         anchors.fill: parent
         initialItem: "./HomeUI/Startup.qml"
     }
-    onTitlemsgChanged: headerMsg.text = titlemsg;
+    onTitlemsgChanged: {
+        testCompleted.width = 0;
+        testunCompleted.width = 0;
+        headerMsg.text = titlemsg;
+    }
     onEnableTabBarChanged: tabBar.enabled = enableTabBar;
 
     onTestprocessChanged: {

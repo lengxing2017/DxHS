@@ -2,6 +2,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.5
 
 import Dx.Sequence 1.0
+import Dx.Global 1.0
+
 Page {
     id: boxready_page
     Image {
@@ -20,7 +22,7 @@ Page {
     Text{
         id: panelName
 
-        text:"上呼吸倒测试"
+        text:ExGlobal.panelName
         font.pixelSize: 30
         anchors.horizontalCenter: startbutton.horizontalCenter
         anchors.horizontalCenterOffset: -300
@@ -30,7 +32,7 @@ Page {
     Text{
         id: panelLot
 
-        text:"Lot# 0180434"
+        text:ExGlobal.panelCode
         font.pixelSize: 30
         anchors.horizontalCenter: startbutton.horizontalCenter
         anchors.horizontalCenterOffset: -300
@@ -40,7 +42,7 @@ Page {
     Text{
         id: sampleNo
 
-        text:"SLX 01079"
+        text:ExGlobal.sampleCode
         font.pixelSize: 30
         anchors.horizontalCenter: startbutton.horizontalCenter
         anchors.horizontalCenterOffset: +200
@@ -50,7 +52,7 @@ Page {
     Text{
         id: sampleInfo
 
-        text:"华山11"
+        text:ExGlobal.sampleInfo
         font.pixelSize: 30
         anchors.horizontalCenter: startbutton.horizontalCenter
         anchors.horizontalCenterOffset: +200
@@ -68,7 +70,7 @@ Page {
     Text{
         id: userName
 
-        text:"user001"
+        text:ExGlobal.user
         font.pixelSize: 30
         anchors.left: parent.left
         anchors.leftMargin: 20
@@ -85,6 +87,10 @@ Page {
         anchors.bottomMargin: 20
         anchors.right: parent.right
         anchors.rightMargin: 20
+        onClicked: {
+            stackView.pop();
+            stackView.push("qrc:/HomeUI/Idle.qml");
+        }
     }
     Component.onCompleted: {
         home_page.titlemsg=qsTr("试剂盒就绪");

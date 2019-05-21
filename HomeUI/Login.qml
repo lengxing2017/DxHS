@@ -4,7 +4,8 @@ import QtQuick.Controls 2.5
 import Dx.SqliteMgr 1.0
 import Dx.Sequence 1.0
 import Dx.ParmMgr 1.0
-
+import Dx.UserMgr 1.0
+import Dx.Global 1.0
 Page {
     id: login_page
     Rectangle{
@@ -112,10 +113,13 @@ Page {
         }
     }
 
-    function login(){        
-        //Sequence.sequenceDo(Sequence.SequenceId.Sequence_SelfCheck);
-        stackView.pop();
-        stackView.push("qrc:/HomeUI/Idle.qml");        
+    function login(){                
+        if (UserMgr.logon(login_name.text,login_password.text))
+        {
+            ExGlobal.user = login_name.text;
+            stackView.pop();
+            stackView.push("qrc:/HomeUI/Idle.qml");
+        }
     }
 
     function createtable(){
