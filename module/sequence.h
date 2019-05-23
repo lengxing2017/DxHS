@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include <QtCore>
+#include <QtXml>
 
 class Sequence : public QObject
 {
@@ -36,6 +37,7 @@ public:
 
     Q_INVOKABLE void sequenceDo(SequenceId id);
     Q_INVOKABLE void sequenceCancel();
+    Q_INVOKABLE QString sequenceMessage();
 
 signals:
     void sequenceFinish(SequenceResult result);
@@ -46,9 +48,15 @@ public slots:
 
 private:
     bool ReadTestProcess(QString panel);
+    bool WriteTestProcess(QString panel);
+    bool DoAction(QDomElement action);
+    bool FindAction(bool bFinishAction);
+    int CalSteps(QDomElement element);
+    bool FormatAction();
+    QDomDocument doc;
     QTimer *timer;
-    SequenceId currSequenceId;
-    int nFinishCount;
+    SequenceId currSequenceId;    
+    QString message;
 };
 
 static QObject *sequence_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
