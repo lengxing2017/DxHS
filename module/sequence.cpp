@@ -10,12 +10,15 @@ Sequence::Sequence(QObject *parent) : QObject(parent)
     connect(timer,SIGNAL(timeout()),this,SLOT(SequenceTimeout()));
 }
 
+bool Sequence::sequenceInit(){
+    return true;
+}
 void Sequence::sequenceDo(SequenceId id)
 {        
     this->currSequenceId = id;
     if (id == SequenceId::Sequence_Test)
     {
-        if (!ReadTestProcess(QCoreApplication::applicationDirPath()+"/P0180415cn"))
+        if (!ReadTestProcess(QCoreApplication::applicationDirPath()+"/FLASHDXcn"))
             emit sequenceFinish(SequenceResult::Result_Test_DataErr);
         else
             FindAction(false);
@@ -63,6 +66,21 @@ bool Sequence::ReadTestProcess(QString panel)
     }
     xmlfile.close();
 
+    QDomElement root = doc.documentElement();
+
+    for (PanelTest = root.firstChildElement("PanelTest"); !PanelTest.isNull(); PanelTest = PanelTest.nextSiblingElement("PanelTest"))
+    {
+        if (PanelTest.attribute("PanelCode")=="012315")
+        {
+            ExGlobal::setPanelName(PanelTest.attribute("PanelName"));
+            ExGlobal::setPanelCode(PanelTest.attribute("PanelCode"));
+            break;
+        }
+    }
+
+    if (PanelTest.isNull())
+        return false;
+
     if (!FormatAction())
         return false;
 
@@ -82,32 +100,40 @@ bool Sequence::WriteTestProcess(QString panel)
     return true;
 }
 
-bool Sequence::DoAction(QDomElement action)
+bool Sequence::DoAction(QDomElement action,bool isChild)
 {    
     int nDuration = action.attribute("Duration").toInt();
-
+    int nPreTime = action.attribute("pretime").toInt();
+    if (isChild){
+        QDomElement p = action.parentNode().toElement();
+        nPreTime += p.attribute("Duration").toInt()*(p.attribute("currcycle").toInt()-1) + p.attribute("pretime").toInt();
+        message.sprintf("总时间：%d秒;\t完成时间：%d秒;\t第 %d 步; \t耗时：%d秒\n\t第%d循环; \t第 %d 步; \t耗时：%d秒\t设备：",PanelTest.attribute("Duration").toInt(),nPreTime,
+                        p.attribute("No").toInt(),p.attribute("Duration").toInt(),p.attribute("currcycle").toInt(),action.attribute("No").toInt(),action.attribute("Duration").toInt());
+    }
+    else
+        message.sprintf("总时间：%d秒;\t完成时间：%d秒;\t第 %d 步; \t耗时：%d秒\t设备：",PanelTest.attribute("Duration").toInt(),nPreTime,action.attribute("No").toInt(),action.attribute("Duration").toInt());
+    message += action.attribute("Device")+","+action.attribute("ActionValue");
+    emit processFinish(PanelTest.attribute("Duration").toInt(),nPreTime);
     timer->start(1000*nDuration);
+
     return true;
 }
 
-QString Sequence::sequenceMessage(){
+QString Sequence::sequenceMessage(){    
     return message;
 }
 bool Sequence::FindAction(bool bFinishAction)
-{
-    QDomElement root = doc.documentElement();
-    int totalStep = root.attribute("steps").toInt();
-    int currStep = root.attribute("currstep").toInt();
-    int nTotalTime = root.attribute("Duration").toInt();
-    QDomNode node = root.firstChild();
+{    
+    int totalStep = PanelTest.attribute("steps").toInt();
+    int currStep = PanelTest.attribute("currstep").toInt();
+    int nTotalTime = PanelTest.attribute("Duration").toInt();
 
-    while (!node.isNull()) {
-        QDomElement e = node.toElement();
-        if (!e.isNull() && e.hasAttribute("No") && e.attribute("No").toInt() == currStep){
-
+    QDomElement e = PanelTest.firstChildElement();
+    while (!e.isNull()) {
+        if (e.hasAttribute("No") && e.attribute("No").toInt() == currStep){
             if (e.tagName() == "Action"){
                 if (!bFinishAction)
-                    return DoAction(e);
+                    return DoAction(e,false);
                 else if(currStep == totalStep)
                 {
                     emit processFinish(nTotalTime,nTotalTime);
@@ -116,7 +142,7 @@ bool Sequence::FindAction(bool bFinishAction)
                 else
                 {
                     currStep++;
-                    root.setAttribute("currstep",currStep);
+                    PanelTest.setAttribute("currstep",currStep);
                     return FindAction(false);
                 }
             }else if(e.tagName() == "Actions"){
@@ -130,9 +156,9 @@ bool Sequence::FindAction(bool bFinishAction)
                     QDomNode n = list.at(i);
                     if (n.isElement()){
                         QDomElement ne = n.toElement();
-                        if (ne.tagName() == "Action"){
+                        if (ne.tagName() == "Action" && ne.attribute("No").toInt() == nChildCurrStep){
                             if (!bFinishAction)
-                                return DoAction(ne);
+                                return DoAction(ne,true);
                             else if(nChildCurrStep == nChildTotalStep){
                                 if (nCurrCycle == nCycle){
                                     if (currStep == totalStep){
@@ -141,7 +167,7 @@ bool Sequence::FindAction(bool bFinishAction)
                                     }
                                     else{
                                         currStep++;
-                                        root.setAttribute("currstep",currStep);
+                                        PanelTest.setAttribute("currstep",currStep);
                                     }
                                 }
                                 else {
@@ -162,6 +188,7 @@ bool Sequence::FindAction(bool bFinishAction)
                 }
             }
         }
+        e = e.nextSiblingElement();
     }
 
     return true;
@@ -183,17 +210,14 @@ int Sequence::CalSteps(QDomElement element)
 
 bool Sequence::FormatAction(){
     bool result = false;
-    QDomElement root = doc.documentElement();
-    root.setAttribute("currstep",1);
-    int totalStep = CalSteps(root);
-    int nFinishTime = 0;
-    root.setAttribute("steps",totalStep);
 
-    ExGlobal::setPanelName(root.attribute("PanelName"));
-    ExGlobal::setPanelCode(root.attribute("PanelCode"));
+    PanelTest.setAttribute("currstep",1);
+    int totalStep = CalSteps(PanelTest);
+    int nFinishTime = 0;
+    PanelTest.setAttribute("steps",totalStep);
 
     for (int i = 1; i <= totalStep; i++){
-        QDomNode node = root.firstChild();
+        QDomNode node = PanelTest.firstChild();
         while (!node.isNull()) {
             QDomElement e = node.toElement();
             if (!e.isNull()&& e.hasAttribute("No") && e.attribute("No").toInt() == i){
@@ -238,6 +262,6 @@ bool Sequence::FormatAction(){
         if (!result)
             return false;
     }
-    root.setAttribute("Duration",nFinishTime);
+    PanelTest.setAttribute("Duration",nFinishTime);
     return true;
 }

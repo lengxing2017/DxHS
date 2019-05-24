@@ -23,16 +23,14 @@ Page {
         if (testprocess <= 0 || testprocess >= 100)
         {
             testCompleted.width = 0;
-            testunCompleted.width = 0;
-            headerMsg.text = "测试完成！";
+            testunCompleted.width = 0;            
         }
         else
         {
             testCompleted.width = testprocess*headerRec.width/100;
             testunCompleted.x = testCompleted.width;
             testunCompleted.width = (100-testprocess)*headerRec.width/100;
-            headerMsg.text = "预计剩余"+(100-testprocess)+"分钟";
-        }
-        //console.log("onTestprocessChanged,testCompleted.width:"+testCompleted.width+",testNotCompleted.x:"+testNotCompleted.x+",testNotCompleted.width:"+testNotCompleted.width+",parent.width:"+parent.width+",header.width:"+headerRec.width);
+
+        }        
     }
 }

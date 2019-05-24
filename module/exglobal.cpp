@@ -6,12 +6,12 @@
 #include "dao/parmmgr.h"
 #include "dao/testresultmgr.h"
 #include "dao/usermgr.h"
-
+#include "sequence.h"
 #include <QDebug>
 #include "sqlitemgr.h"
 #include <QCoreApplication>
 
-QString ExGlobal::t_panelCode = "Lot# 0180435";
+QString ExGlobal::t_panelCode = "0180435";
 QString ExGlobal::t_panelName = "PanelNameInit";
 QString ExGlobal::t_sampleCode = "";
 QString ExGlobal::t_sampleInfo = "";
@@ -28,6 +28,8 @@ void ExGlobal::exInit()
 
     qDebug()<<"ExInit";
     t_panelCode = "lxText";
+
+    Sequence::sequenceInit();
 
     if(sqlitemgrinstance == nullptr)
     {

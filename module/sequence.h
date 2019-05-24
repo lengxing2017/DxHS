@@ -38,6 +38,7 @@ public:
     Q_INVOKABLE void sequenceDo(SequenceId id);
     Q_INVOKABLE void sequenceCancel();
     Q_INVOKABLE QString sequenceMessage();
+    static bool sequenceInit();
 
 signals:
     void sequenceFinish(SequenceResult result);
@@ -49,11 +50,12 @@ public slots:
 private:
     bool ReadTestProcess(QString panel);
     bool WriteTestProcess(QString panel);
-    bool DoAction(QDomElement action);
+    bool DoAction(QDomElement action,bool isChild);
     bool FindAction(bool bFinishAction);
     int CalSteps(QDomElement element);
     bool FormatAction();
-    QDomDocument doc;
+    static QDomDocument doc;
+    static QDomElement PanelTest;
     QTimer *timer;
     SequenceId currSequenceId;    
     QString message;

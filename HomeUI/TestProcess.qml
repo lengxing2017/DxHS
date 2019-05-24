@@ -54,6 +54,18 @@ Page {
     }    
 
     Text{
+        id: message
+        height: 100
+        width: parent.width - 40
+        text:"ExGlobal.s"
+        font.pixelSize: 20
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.top: sampleInfo.bottom
+        anchors.topMargin: 40
+        wrapMode: Text.Wrap
+    }
+    Text{
         id: userName
 
         text:ExGlobal.user
@@ -88,7 +100,15 @@ Page {
         target: Sequence
         onProcessFinish:{
             console.log("TestProcess.qml,total:"+total+",finish:"+finish);
-            home_page.testprocess = finish;
+            var ffinish = finish*100/total;
+            if (ffinish == 0) ffinish = 1;
+            home_page.testprocess = ffinish;
+            if (total == finish)
+                headerMsg.text = "测试完成！";
+            else
+                headerMsg.text = "预计剩余"+(total-finish)+"分钟";
+            message.text = Sequence.sequenceMessage();
+            console.log(message.text);
         }
 
         onSequenceFinish:{
